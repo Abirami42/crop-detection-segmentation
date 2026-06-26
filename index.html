@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Detection & Segmentation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">🌿 CropSeg AI</div>
+        <div class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="#demo">Demo</a>
+            <a href="#results">Results</a>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>Crop Detection & Segmentation</h1>
+            <p>AI-powered mango and tea crop identification using YOLOv8 deep learning</p>
+            <a href="#demo" class="btn-primary">Try Demo</a>
+        </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section class="about" id="about">
+        <div class="container">
+            <h2>About the Project</h2>
+            <div class="about-grid">
+                <div class="about-card">
+                    <div class="icon">🥭</div>
+                    <h3>Mango Detection</h3>
+                    <p>Detects and segments mango trees with 72.7% mAP50 accuracy using pixel-wise segmentation masks.</p>
+                </div>
+                <div class="about-card">
+                    <div class="icon">🍃</div>
+                    <h3>Tea Detection</h3>
+                    <p>Identifies tea plantations with 70.3% mAP50 accuracy, covering complex overlapping bush structures.</p>
+                </div>
+                <div class="about-card">
+                    <div class="icon">🤖</div>
+                    <h3>YOLOv8l-seg Model</h3>
+                    <p>Trained on 3,134 images from CVAT and Roboflow with SAM2-assisted annotation for high accuracy.</p>
+                </div>
+                <div class="about-card">
+                    <div class="icon">📊</div>
+                    <h3>71.5% Overall Accuracy</h3>
+                    <p>Achieved 71.5% segmentation mAP50 and 76.4% detection mAP50 on validation set.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DEMO SECTION -->
+    <section class="demo" id="demo">
+        <div class="container">
+            <h2>Live Demo</h2>
+            <p class="demo-subtitle">Upload a mango or tea crop image to detect and segment</p>
+            
+            <div class="demo-area">
+                <div class="upload-box" id="uploadBox">
+                    <div class="upload-content" id="uploadContent">
+                        <div class="upload-icon">📁</div>
+                        <p>Drag & drop an image here</p>
+                        <p class="or-text">or</p>
+                        <label for="fileInput" class="btn-upload">Choose Image</label>
+                        <input type="file" id="fileInput" accept="image/*" hidden>
+                    </div>
+                    <img id="previewImg" class="preview-img hidden" alt="Preview">
+                </div>
+
+                <div class="arrow">→</div>
+
+                <div class="result-box" id="resultBox">
+                    <div class="result-placeholder" id="resultPlaceholder">
+                        <div class="upload-icon">🔍</div>
+                        <p>Prediction will appear here</p>
+                    </div>
+                    <img id="resultImg" class="preview-img hidden" alt="Result">
+                </div>
+            </div>
+
+            <button class="btn-predict" id="predictBtn" disabled>
+                <span id="btnText">🚀 Detect Crops</span>
+            </button>
+
+            <!-- DETECTION RESULTS -->
+            <div class="detection-results hidden" id="detectionResults">
+                <h3>Detection Results</h3>
+                <div class="results-grid" id="resultsGrid"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MODEL RESULTS SECTION -->
+    <section class="results-section" id="results">
+        <div class="container">
+            <h2>Model Performance</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value">71.5%</div>
+                    <div class="metric-label">Segmentation mAP50 (Val)</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">76.4%</div>
+                    <div class="metric-label">Detection mAP50 (Val)</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">68.3%</div>
+                    <div class="metric-label">Segmentation mAP50 (Test)</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">3,134</div>
+                    <div class="metric-label">Training Images</div>
+                </div>
+            </div>
+
+            <h3 class="table-title">Model Comparison</h3>
+            <div class="table-wrapper">
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Model</th>
+                            <th>Dataset</th>
+                            <th>Epochs</th>
+                            <th>Overall mAP50</th>
+                            <th>Mango mAP50</th>
+                            <th>Tea mAP50</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>YOLOv8m-seg</td>
+                            <td>CVAT only</td>
+                            <td>100</td>
+                            <td>0.497</td>
+                            <td>0.569</td>
+                            <td>0.425</td>
+                        </tr>
+                        <tr>
+                            <td>YOLOv8m-seg</td>
+                            <td>CVAT only</td>
+                            <td>200</td>
+                            <td>0.476</td>
+                            <td>0.557</td>
+                            <td>0.395</td>
+                        </tr>
+                        <tr>
+                            <td>YOLOv8x-seg</td>
+                            <td>CVAT only</td>
+                            <td>100</td>
+                            <td>0.497</td>
+                            <td>0.564</td>
+                            <td>0.430</td>
+                        </tr>
+                        <tr>
+                            <td>RT-DETR</td>
+                            <td>CVAT only</td>
+                            <td>100</td>
+                            <td>0.459</td>
+                            <td>0.505</td>
+                            <td>0.414</td>
+                        </tr>
+                        <tr class="best-row">
+                            <td>YOLOv8l-seg ✅</td>
+                            <td>CVAT+Roboflow+SAM2</td>
+                            <td>45+30</td>
+                            <td>0.715</td>
+                            <td>0.727</td>
+                            <td>0.703</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>🌿 Crop Detection & Segmentation | YOLOv8l-seg | Built with Flask & Ultralytics</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
